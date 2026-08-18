@@ -1,10 +1,12 @@
 'use strict';
 
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express   = require('express');
+const helmet    = require('helmet');
+const rateLimit = require('express-rate-limit');
+const fs        = require('fs');
+const path      = require('path');
 const { execFile } = require('child_process');
-const { nanoid } = require('nanoid');
+const { nanoid }   = require('nanoid');
 
 const app = express();
 const PORT = parseInt(process.env.PORT ?? '4040', 10);
@@ -14,6 +16,45 @@ const MAX_SIZE_KB = parseInt(process.env.MAX_SIZE_KB ?? '512', 10);
 
 // Ensure data directory exists
 fs.mkdirSync(DATA_DIR, { recursive: true });
+
+// ── Security headers (Helmet) ────────────────────────────────
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc:  ["'self'"],
+        scriptSrc:   ["'self'", 'cdnjs.cloudflare.com'],
+        styleSrc:    ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', 'fonts.googleapis.com'],
+        fontSrc:     ["'self'", 'fonts.gstatic.com'],
+        imgSrc:      ["'self'", 'data:'],
+        connectSrc:  ["'self'"],
+        frameSrc:    ["'none'"],
+        objectSrc:   ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // Allow CDN resources
+  }),
+);
+
+// ── Rate limiting ────────────────────────────────────────────
+const generalLimiter = rateLimit({
+  windowMs:        15 * 60 * 1000, // 15 minutes
+  max:             300,
+  standardHeaders: true,
+  legacyHeaders:   false,
+  message:         { error: 'Too many requests, please try again later.' },
+});
+
+const writeLimiter = rateLimit({
+  windowMs:        15 * 60 * 1000,
+  max:             60,              // Max 60 clips per 15 min per IP
+  standardHeaders: true,
+  legacyHeaders:   false,
+  message:         { error: 'Too many clips created, please slow down.' },
+});
+
+app.use(generalLimiter);
 
 // ── Middleware ───────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
@@ -78,7 +119,7 @@ function enforceLimit() {
  * Accepts: application/json { content: string } or text/plain body
  * Compatible with: curl --data-binary @- -H "Content-Type: text/plain"
  */
-app.post('/api/clips', (req, res) => {
+app.post('/api/clips', writeLimiter, (req, res) => {
   // express.text() populates req.body as a string for text/plain
   // express.json() populates req.body as an object for application/json
   const content = typeof req.body === 'string' ? req.body : (req.body?.content ?? '');
