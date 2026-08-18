@@ -30,7 +30,7 @@ app.use(
         connectSrc:  ["'self'"],
         frameSrc:    ["'none'"],
         objectSrc:   ["'none'"],
-        upgradeInsecureRequests: [],
+        // upgradeInsecureRequests omitted — server runs on plain HTTP (LAN)
       },
     },
     crossOriginEmbedderPolicy: false, // Allow CDN resources
