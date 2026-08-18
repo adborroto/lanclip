@@ -4,7 +4,9 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-20-green?logo=node.js)
 ![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)
+![Docker Hub](https://img.shields.io/docker/pulls/adoborroto/lanclip?logo=docker&label=Docker%20Hub)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+[![Build & Publish](https://github.com/adborroto/lanclip/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/adborroto/lanclip/actions/workflows/docker-publish.yml)
 
 ---
 
