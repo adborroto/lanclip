@@ -26,13 +26,51 @@
 
 ## Quick start
 
+### Option 1 — Docker Hub (recommended)
+
+No need to clone anything. Create a `docker-compose.yml` on your server:
+
+```yaml
+services:
+  lanclip:
+    image: adoborroto/lanclip:latest
+    container_name: lanclip
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./clips-data:/data/clips
+    environment:
+      MAX_CLIPS: 500
+      MAX_SIZE_KB: 512
+    restart: unless-stopped
+```
+
+Then:
+
+```bash
+docker compose up -d
+```
+
+Or with a single `docker run`:
+
+```bash
+docker run -d \
+  --name lanclip \
+  -p 4040:4040 \
+  -v ./clips-data:/data/clips \
+  --restart unless-stopped \
+  adoborroto/lanclip:latest
+```
+
+Open `http://<your-server-ip>:4040` in any browser on your network.
+
+### Option 2 — Build from source
+
 ```bash
 git clone https://github.com/adborroto/lanclip.git
 cd lanclip
 docker compose up -d
 ```
-
-Open `http://<your-server-ip>:4040` in any browser on your network.
 
 ---
 
