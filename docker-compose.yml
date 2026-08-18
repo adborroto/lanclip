@@ -1,0 +1,20 @@
+services:
+  lanclip:
+    build: .
+    container_name: lanclip
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./clips-data:/data/clips
+    environment:
+      PORT: 4040
+      DATA_DIR: /data/clips
+      MAX_CLIPS: 500        # Delete oldest clips when this limit is exceeded
+      MAX_SIZE_KB: 512      # Maximum clip size in kilobytes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4040/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
