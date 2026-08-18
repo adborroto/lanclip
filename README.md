@@ -74,6 +74,34 @@ docker compose up -d
 
 ---
 
+## Shell aliases — one-line install
+
+Installs `lcp`, `lpaste`, `lget`, `lsearch` and `lls` in your shell (bash / zsh / fish):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/adborroto/lanclip/main/install.sh | bash -s -- http://<your-server-ip>:4040
+```
+
+Or interactive (will ask for the URL):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/adborroto/lanclip/main/install.sh | bash
+```
+
+Then reload your shell (`source ~/.zshrc` / `source ~/.bashrc`) and you're good to go.
+
+The script is **idempotent** — safe to run multiple times. If you change servers, re-run it with the new URL and it will update automatically.
+
+| Command | What it does |
+|---|---|
+| `lcp` | Pipe stdin → LanClip &nbsp;(`cat file.txt \| lcp`) |
+| `lpaste` | Print latest clip to stdout |
+| `lget <id>` | Print a specific clip by ID |
+| `lsearch <query>` | Full-text search |
+| `lls` | List 10 most recent clips |
+
+---
+
 ## curl Usage
 
 ### Copy to server (push)
