@@ -716,3 +716,14 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// Inject real server URL into the empty-state curl example
+document.addEventListener('DOMContentLoaded', () => {
+  const codeEl = document.querySelector('.empty-code');
+  if (codeEl) {
+    codeEl.textContent = codeEl.textContent.replace(
+      /http:\/\/<your-ip>:\d+/g,
+      window.location.origin,
+    );
+  }
+});
